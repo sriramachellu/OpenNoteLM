@@ -44,6 +44,12 @@ export default function UploadZone({ sessionId, notebookId, onComplete }: { sess
 
             const result = await response.json();
             if (!result.ok) throw new Error(result.error);
+            if (!result.markdown || result.markdown.trim().length === 0) {
+                console.error("DEBUG: Extracted markdown is empty!", result);
+                alert("DEBUG - PDF extracted but returned 0 bytes of text. Please check the Developer Console.");
+                throw new Error("Extracted PDF returned empty text.");
+            }
+            console.log(`DEBUG: Extracted ${result.markdown.length} characters of markdown from ${file.name}`);
 
             // Step 1.5: Upload file to Convex storage
             const postUrl = await generateUploadUrl();
